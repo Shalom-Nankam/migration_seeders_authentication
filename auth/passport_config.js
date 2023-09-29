@@ -20,7 +20,6 @@ module.exports = (passport) => {
           email: data.email,
         },
       });
-      //   const user = users.find((user) => user.username == data.username);
       if (user) {
         return done(null, user);
       }

@@ -4,9 +4,6 @@ const authRouter = require("./auth/auth_router").router;
 const passport = require("passport");
 require("./auth/passport_config")(passport);
 const sequelize = require("./config/sequelize");
-const Item = require("./models/item");
-const Category = require("./models/categories");
-const User = require("./models/user");
 
 const PORT = 3000;
 
@@ -25,10 +22,8 @@ app.use(
 app.use("/auth", authRouter);
 
 app.get("/", async (req, res) => {
-  const items = await User.findAll();
-  return res.status(200).json({
-    message: "Items retrieved successfully",
-    data: items,
+  return res.status(404).json({
+    message: "Resource not found!",
   });
 });
 

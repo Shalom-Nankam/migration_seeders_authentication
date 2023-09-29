@@ -5,8 +5,6 @@ const middlware = require("../middlewares/global.middlware");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-users = [];
-
 const router = express.Router();
 
 router.post("/login", middlware, async (req, res) => {
@@ -17,8 +15,6 @@ router.post("/login", middlware, async (req, res) => {
       email: email,
     },
   });
-
-  //   const user = users.find((user) => user.username == username);
 
   if (!user) {
     res
@@ -63,7 +59,6 @@ router.post("/register", middlware, async (req, res) => {
       password: userInfo.password,
       role: userInfo.role,
     });
-    // users.push(newUser);
     res.status(201).json({
       message: "User created successfully",
       user: { userInfo },
