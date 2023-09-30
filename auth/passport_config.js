@@ -2,9 +2,7 @@ const JwtStrategy = require("passport-jwt").Strategy;
 
 const ExtractJwt = require("passport-jwt").ExtractJwt;
 
-const User = require("../models/user");
-const users = require("./auth_router").users;
-
+const UserModel = require("../models/user");
 require("dotenv").config();
 
 const customOptions = {
@@ -15,10 +13,8 @@ const customOptions = {
 module.exports = (passport) => {
   passport.use(
     new JwtStrategy(customOptions, async function (data, done) {
-      const user = await User.findOne({
-        where: {
-          email: data.email,
-        },
+      const user = await UserModel.findOne({
+        email: data.email,
       });
       if (user) {
         return done(null, user);

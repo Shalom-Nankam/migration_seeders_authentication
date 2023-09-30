@@ -1,52 +1,42 @@
-const sequelize = require("../config/sequelize");
-const { DataTypes } = require("sequelize");
-const Category = require("./categories");
+const mongoose = require("mongoose");
+const shortid = require("shortid");
 
-const Item = sequelize.define(
-  "items",
+const Schema = mongoose.Schema;
+
+const ItemSchema = new Schema(
   {
-    id: {
-      type: DataTypes.BIGINT,
+    _id: {
+      type: String,
+      default: shortid.generate,
       allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
     },
     name: {
-      type: DataTypes.STRING,
+      type: String,
       allowNull: false,
+      required: true,
     },
     size: {
-      type: DataTypes.STRING,
+      type: String,
       allowNull: false,
+      required: true,
     },
     price: {
-      type: DataTypes.BIGINT,
-      allowNull: false,
-    },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
-    updated_at: {
-      type: DataTypes.DATE,
+      type: BigInt,
+      required: true,
       allowNull: false,
     },
     category_id: {
-      type: DataTypes.BIGINT,
+      type: BigInt,
       allowNull: false,
     },
   },
   {
-    underscored: true,
-    tableName: "items",
-    createdAt: "created_at",
-    updatedAt: "updated_at",
+    timestamps: {
+      createdAt: "created_at",
+      updatedAt: "updated_at",
+    },
   }
 );
 
-Category.hasMany(Item);
-Item.belongsTo(Category, {
-  foreignKey: "category_id",
-});
-
-module.exports = Item;
+const ItemModel = mongoose.model("item", ItemSchema);
+module.exports = ItemModel;

@@ -1,6 +1,5 @@
 const express = require("express");
-const bCrypt = require("bcrypt");
-const User = require("../models/user");
+const UserModel = require("../models/user");
 const middlware = require("../middlewares/global.middlware");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
@@ -10,10 +9,8 @@ const router = express.Router();
 router.post("/login", middlware, async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await User.findOne({
-    where: {
-      email: email,
-    },
+  const user = await UserModel.findOne({
+    email: email,
   });
 
   if (!user) {
@@ -23,14 +20,7 @@ router.post("/login", middlware, async (req, res) => {
     return;
   }
 
-  const isValidPassword = bCrypt
-    .compare(password.toString(), user.password.toString())
-    .then({})
-    .catch((err) => {
-      console.log({
-        err,
-      });
-    });
+  const isValidPassword = user.isValidPassword(user.password);
 
   if (!isValidPassword) {
     res.status(401).json({ message: "Wrong password, not authenticated" });
@@ -50,9 +40,7 @@ router.post("/login", middlware, async (req, res) => {
 router.post("/register", middlware, async (req, res) => {
   try {
     const userInfo = req.body;
-    const hashedPassword = bCrypt.hash(userInfo.password, 10);
-    userInfo.password = (await hashedPassword).toString();
-    const newUser = await User.create({
+    const newUser = await UserModel.create({
       first_name: userInfo.first_name,
       last_name: userInfo.last_name,
       email: userInfo.email,
@@ -80,4 +68,4 @@ router.post("*", (req, res) => {
   });
 });
 
-module.exports = { router, users };
+module.exports = { router };

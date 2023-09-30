@@ -1,34 +1,27 @@
-const sequelize = require("../config/sequelize");
-const { DataTypes } = require("sequelize");
+const mongoose = require("mongoose");
+const shortid = require("shortid");
 
-const Category = sequelize.define(
-  "categories",
+const Schema = mongoose.Schema;
+
+const CategorySchema = new Schema(
   {
-    id: {
-      type: DataTypes.BIGINT,
-      primaryKey: true,
-      autoIncrement: true,
-      allowNull: false,
+    _id: {
+      type: String,
+      default: shortid.generate,
     },
     name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
-    updated_at: {
-      type: DataTypes.DATE,
+      type: String,
       allowNull: false,
     },
   },
   {
-    underscored: true,
-    tableName: "categories",
-    createdAt: "created_at",
-    updatedAt: "updated_at",
+    timestamps: {
+      createdAt: "created_at",
+      updatedAt: "updated_at",
+    },
   }
 );
 
-module.exports = Category;
+const CategoryModel = mongoose.model("category");
+
+module.exports = CategoryModel;

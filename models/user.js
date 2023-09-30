@@ -1,53 +1,60 @@
-const sequelize = require("../config/sequelize");
-const { DataTypes } = require("sequelize");
+const mongoose = require("mongoose");
+const shortid = require("shortid");
+const bcrypt = require("bcrypt");
 
-const User = sequelize.define(
-  "user",
+const Schema = mongoose.Schema;
+const ObjectId = Schema.ObjectId;
+
+const UserSchema = new Schema(
   {
-    id: {
-      type: DataTypes.BIGINT,
+    _id: {
+      type: String,
+      default: shortid.generate,
       allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
     },
     first_name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    role: {
-      type: DataTypes.ENUM,
-      values: ["admin", "regular"],
+      type: String,
+      required: true,
     },
     last_name: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: String,
+      required: true,
     },
     email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        isEmail: true,
-      },
-    },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
-    updated_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
+      type: String,
+      unique: true,
+      required: true,
     },
     password: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: String,
+      required: true,
+    },
+    role: {
+      type: String,
+      required: true,
+      enum: ["admin", "regular"],
     },
   },
   {
-    underscored: true,
-    tableName: "users",
-    createdAt: "created_at",
-    updatedAt: "updated_at",
+    timestamps: {
+      createdAt: "created_at",
+      updatedAt: "updated_at",
+    },
   }
 );
 
-module.exports = User;
+UserSchema.pre("save", async function (next) {
+  const hash = await bcrypt.hash(this.password, 10);
+  this.password = hash;
+
+  next();
+});
+
+UserSchema.methods.isValidPassword = async function (password) {
+  const compare = await bcrypt.compare(password, this.password);
+  return compare;
+};
+
+const UserModel = mongoose.model("User", UserSchema);
+
+module.exports = UserModel;

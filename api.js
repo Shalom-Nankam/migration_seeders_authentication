@@ -3,8 +3,7 @@ const itemsRouter = require("./items/items.router");
 const authRouter = require("./auth/auth_router").router;
 const passport = require("passport");
 require("./auth/passport_config")(passport);
-const sequelize = require("./config/sequelize");
-
+const db = require("./db/config");
 const PORT = 3000;
 
 const app = express();
@@ -27,23 +26,7 @@ app.get("/", async (req, res) => {
   });
 });
 
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log("============> connected to db successfully");
-  })
-  .catch((err) => {
-    console.log(`===================> error connecting to the db : ${err}`);
-  });
-
-sequelize
-  .sync({ force: false })
-  .then(() => {
-    console.log("=================> synced database");
-  })
-  .catch((err) => {
-    console.log(`===================> error syncing the db : ${err}`);
-  });
+db.connect();
 
 app.listen(PORT, () => {
   console.log("Server started successfully");

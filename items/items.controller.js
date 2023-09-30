@@ -1,6 +1,6 @@
-const Items = require("../models/item");
+const ItemModel = require("../models/item");
 const GetAllItems = async (req, res) => {
-  const items = await Items.findAll();
+  const items = await ItemModel.find();
   res.status(200).json({
     message: "Items retrieved",
     data: items,
